@@ -8,6 +8,5 @@ Cadastro de usuário e livro.
 # Portal biblioteca:
 Emprestimo de livros a usuarios
 (Menu Terminal)
-Tabela Hash ID -> DADOS
-(K,V)= Chave K possui o valor V (String)
+
 
