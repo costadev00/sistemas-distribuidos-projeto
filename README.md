@@ -16,6 +16,9 @@ rpc RemoveUsuario(Identificador) returns (Status) {} = Cliente: Key / Servidor: 
 rpc ObtemUsuario(Identificador) returns (Usuario) {} = Cliente: Key / Servidor: retorna Dados para sucesso, Erro: Usuario com dados em branco. 
 
 rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {} = Cliente: invoca método sem argumentos / Servidor: retorna lista de todos os usuários cadastrados.
+
+(O programa não pode crashar).
+
 # Portal biblioteca:
 Emprestimo de livros a usuarios
 (Menu Terminal)
