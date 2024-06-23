@@ -14,11 +14,13 @@ PYTHON="python3"
 PROTOC="${PYTHON} -m grpc_tools.protoc"
 
 # Estrutura do projeto
-PYTHON_SRC="src/biblioteca"
+PYTHON_SRC="src"
+## Caminho relativo à ${PYTHON_SRC}
+PYTHON_MAIN_MODULE="biblioteca"
 PYTHON_VENV_DIR="env"
 PROTO_DIR="src/gRPC/protos"
 ## Caminho relativo à ${PYTHON_SRC}
-PROTO_OUT_DIR="gRPC"
+PROTO_OUT_DIR="${PYTHON_MAIN_MODULE}/gRPC"
 
 # Funções
 isDebug() {

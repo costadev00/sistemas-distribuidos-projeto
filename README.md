@@ -6,10 +6,12 @@ Assume-se que o ambiente tenha suporte a POSIX sh, siga o FHS, ferramentas equiv
 Basta executar: `./compile.sh`  
 Há instruções extras no arquivo de script para debug.  
 
+# Anotações
+
 Tabela Hash ID -> DADOS.
 
 (K,V)= Chave K possui o valor V (String).
-# Portal cadastro:
+## Portal cadastro:
 Cadastro de usuário e livro.(Menu Terminal).
 
 rpc NovoUsuario(Usuario) returns (Status) {} = Cliente: Dados / Servidor: retorna 0 para sucesso (campo maior que 3), Erro: 1 com descrição do erro.
@@ -24,7 +26,7 @@ rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {} = Cliente: invoca mét
 
 (O programa não pode crashar).
 
-# Portal biblioteca:
+## Portal biblioteca:
 Emprestimo de livros a usuarios
 (Menu Terminal)
 
