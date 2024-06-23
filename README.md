@@ -1,6 +1,11 @@
 # sistemas-distribuidos-projeto
 Projeto da disciplina de sistemas de distribuído. O projeto consiste em implementar um Sistema de Bibliotecas com armazenamento chave-valor (key-value store = KVS).
 
+# Intruções de compilação
+Assume-se que o ambiente tenha suporte a POSIX sh, siga o FHS, ferramentas equivalentes a coreutils e o Python  estejam instalados.  
+Basta executar: `./compile.sh`  
+Há instruções extras no arquivo de script para debug.  
+
 Tabela Hash ID -> DADOS.
 
 (K,V)= Chave K possui o valor V (String).
@@ -13,7 +18,7 @@ rpc EditaUsuario(Usuario) returns (Status) {} = Cliente: Dados / Servidor: retor
 
 rpc RemoveUsuario(Identificador) returns (Status) {} = Cliente: Key / Servidor: retorna 0 para sucesso, Erro: 1 com descrição do erro.
 
-rpc ObtemUsuario(Identificador) returns (Usuario) {} = Cliente: Key / Servidor: retorna Dados para sucesso, Erro: Usuario com dados em branco. 
+rpc ObtemUsuario(Identificador) returns (Usuario) {} = Cliente: Key / Servidor: retorna Dados para sucesso, Erro: Usuario com dados em branco.
 
 rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {} = Cliente: invoca método sem argumentos / Servidor: retorna lista de todos os usuários cadastrados.
 
