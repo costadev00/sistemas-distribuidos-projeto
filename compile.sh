@@ -28,11 +28,11 @@ isDebug() {
 }
 
 python_venv() {
-    $PYTHON -m venv "${PYTHON_VENV_DIR}" && . "${PYTHON_VENV_DIR}"/bin/activate
+    . "${PYTHON_VENV_DIR}/bin/activate"
 }
 
 clean() {
-    rm -rf ${PYTHON_SRC}/${PROTO_OUT_DIR} $PYTHON_VENV_DIR ./**/*.egg-info dist
+    rm -rf "${PYTHON_SRC}/${PROTO_OUT_DIR}" "$PYTHON_VENV_DIR" ./**/*.egg-info dist
 }
 
 genRequirements() {
@@ -48,7 +48,7 @@ installDeps() {
 
 gen_gRPC() {
     isDebug && printf "Gerando arquivos do gRPC...\n"
-    $PROTOC -I${PROTO_OUT_DIR}=${PROTO_DIR} --python_out=${PYTHON_SRC} --pyi_out=${PYTHON_SRC} --grpc_python_out=${PYTHON_SRC} ${PROTO_DIR}/*.proto
+    $PROTOC -I"${PROTO_OUT_DIR}=${PROTO_DIR}" --python_out="${PYTHON_SRC}" --pyi_out="${PYTHON_SRC}" --grpc_python_out="${PYTHON_SRC}" "${PROTO_DIR}"/*.proto
 }
 
 buildInstall() {
@@ -56,9 +56,9 @@ buildInstall() {
     $PYTHON -m build
 
     isDebug && printf "Instalando projeto...\n"
-    WHEEL="dist/$( ls dist | grep -e 'biblioteca.*.whl' | sed -n 1p )"
-    isDebug && printf "Wheel: %s\n" "${WHEEL}"
     if [ $1 -ne 1 ]; then
+        WHEEL="dist/$( ls dist | grep -e "${PYTHON_MAIN_MODULE}.*.whl" | sed -n 1p )"
+        isDebug && printf "Wheel: %s\n" "${WHEEL}"
         $PYTHON -m pip install --force-reinstall "${WHEEL}"
     else
         $PYTHON -m pip install --force-reinstall -e .
@@ -74,6 +74,7 @@ if isDebug; then
 fi
 
 # Todo o script será executado com o virtual environment do Python ativado
+$PYTHON -m venv "${PYTHON_VENV_DIR}"
 python_venv
 
 SOURCE=0
