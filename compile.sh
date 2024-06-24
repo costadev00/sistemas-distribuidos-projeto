@@ -58,7 +58,11 @@ buildInstall() {
     isDebug && printf "Instalando projeto...\n"
     WHEEL="dist/$( ls dist | grep -e 'biblioteca.*.whl' | sed -n 1p )"
     isDebug && printf "Wheel: %s\n" "${WHEEL}"
-    $PYTHON -m pip install --force-reinstall "${WHEEL}"
+    if [ $1 -ne 1 ]; then
+        $PYTHON -m pip install --force-reinstall "${WHEEL}"
+    else
+        $PYTHON -m pip install --force-reinstall -e .
+    fi
 }
 
 #### ENTRYPOINT ####
@@ -72,17 +76,19 @@ fi
 # Todo o script será executado com o virtual environment do Python ativado
 python_venv
 
-run=1
+SOURCE=0
+DEV=0
 case $1 in
     "clean" ) clean; exit ;;
     "requirements" ) genRequirements; exit ;;
+    "dev" ) DEV=1 ;;
+    "source" ) SOURCE=1 ;;
     "" ) ;;
-    "source" ) run=0 ;;
     * ) printf "Argumento não reconhecido: %s\n" $1; exit 1 ;;
 esac
 
-if [ $run -eq 1 ]; then
+if [ $SOURCE -ne 1 ]; then
     installDeps
     gen_gRPC
-    buildInstall
+    buildInstall $DEV
 fi

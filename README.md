@@ -10,6 +10,10 @@ Há instruções extras no arquivo de script para debug.
 ATENÇÃO: Os scripts que executam os clientes e servidores usam a versão
 instalada do projeto no virtualenv do Python, portanto execute `./compile.sh`
 para atualizar o código que será executado.  
+Enquanto o projeto está em desenvolvimento, é recomendado instalá-lo de forma
+editável. Isso pode ser feito com o comando `./compile.sh dev`, assim, as
+alterações no código fonte serão refletidas diretamente no projeto instalado e
+os scripts de execução poderão ser utilizados com uma menor margem para erros.  
 
 # Anotações
 
