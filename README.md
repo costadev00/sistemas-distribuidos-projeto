@@ -6,6 +6,11 @@ Assume-se que o ambiente tenha suporte a POSIX sh, siga o FHS, ferramentas equiv
 Basta executar: `./compile.sh`  
 Há instruções extras no arquivo de script para debug.  
 
+# Execução
+ATENÇÃO: Os scripts que executam os clientes e servidores usam a versão
+instalada do projeto no virtualenv do Python, portanto execute `./compile.sh`
+para atualizar o código que será executado.  
+
 # Anotações
 
 Tabela Hash ID -> DADOS.

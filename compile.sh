@@ -40,6 +40,27 @@ genRequirements() {
     pip-compile pyproject.toml
 }
 
+installDeps() {
+    isDebug && printf "Instalando dependências...\n"
+    $PYTHON -m pip install -U pip wheel setuptools build
+    $PYTHON -m pip install -U grpcio-tools
+}
+
+gen_gRPC() {
+    isDebug && printf "Gerando arquivos do gRPC...\n"
+    $PROTOC -I${PROTO_OUT_DIR}=${PROTO_DIR} --python_out=${PYTHON_SRC} --pyi_out=${PYTHON_SRC} --grpc_python_out=${PYTHON_SRC} ${PROTO_DIR}/*.proto
+}
+
+buildInstall() {
+    isDebug && printf "Criando arquivo wheel...\n"
+    $PYTHON -m build
+
+    isDebug && printf "Instalando projeto...\n"
+    WHEEL="dist/$( ls dist | grep -e 'biblioteca.*.whl' | sed -n 1p )"
+    isDebug && printf "Wheel: %s\n" "${WHEEL}"
+    $PYTHON -m pip install --force-reinstall "${WHEEL}"
+}
+
 #### ENTRYPOINT ####
 
 if isDebug; then
@@ -50,26 +71,18 @@ fi
 
 # Todo o script será executado com o virtual environment do Python ativado
 python_venv
-python -m pip install -U pip
 
+run=1
 case $1 in
     "clean" ) clean; exit ;;
     "requirements" ) genRequirements; exit ;;
     "" ) ;;
+    "source" ) run=0 ;;
     * ) printf "Argumento não reconhecido: %s\n" $1; exit 1 ;;
 esac
 
-isDebug && printf "Instalando dependências...\n"
-$PYTHON -m pip install -U wheel setuptools build
-$PYTHON -m pip install -U grpcio-tools
-
-isDebug && printf "Gerando arquivos do gRPC...\n"
-$PROTOC -I${PROTO_OUT_DIR}=${PROTO_DIR} --python_out=${PYTHON_SRC} --pyi_out=${PYTHON_SRC} --grpc_python_out=${PYTHON_SRC} ${PROTO_DIR}/*.proto
-
-isDebug && printf "Criando arquivo wheel...\n"
-$PYTHON -m build
-
-isDebug && printf "Instalando projeto...\n"
-WHEEL="dist/$( ls dist | grep -e 'biblioteca.*.whl' | sed -n 1p )"
-isDebug && printf "Wheel: %s\n" "${WHEEL}"
-$PYTHON -m pip install --force-reinstall "${WHEEL}"
+if [ $run -eq 1 ]; then
+    installDeps
+    gen_gRPC
+    buildInstall
+fi
