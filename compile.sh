@@ -17,7 +17,7 @@ PROTOC="${PYTHON} -m grpc_tools.protoc"
 PYTHON_SRC="src"
 ## Caminho relativo à ${PYTHON_SRC}
 PYTHON_MAIN_MODULE="biblioteca"
-PYTHON_VENV_DIR="env"
+PYTHON_VENV_DIR=".venv"
 PROTO_DIR="src/gRPC/protos"
 ## Caminho relativo à ${PYTHON_SRC}
 PROTO_OUT_DIR="${PYTHON_MAIN_MODULE}/gRPC"
@@ -42,7 +42,7 @@ genRequirements() {
 
 installDeps() {
     isDebug && printf "Instalando dependências...\n"
-    $PYTHON -m pip install -U pip wheel setuptools build
+    $PYTHON -m pip install -U pip wheel setuptools build paho-mqtt
     $PYTHON -m pip install -U grpcio-tools
 }
 

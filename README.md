@@ -14,6 +14,7 @@ Enquanto o projeto está em desenvolvimento, é recomendado instalá-lo de forma
 editável. Isso pode ser feito com o comando `./compile.sh dev`, assim, as
 alterações no código fonte serão refletidas diretamente no projeto instalado e
 os scripts de execução poderão ser utilizados com uma menor margem para erros.  
+É necessário iniciar o mosquitto manualmente antes de executar os scripts.  
 
 # Anotações
 

@@ -1,5 +1,11 @@
 import sys
 
+from biblioteca import lib
+
 def run():
-    print('Executou ', __name__)
-    print('Argumentos: ', sys.argv)
+    porta = int(sys.argv[1])
+    client = lib.connect_mqtt("server", porta)
+    client.publish("topico", "cad_server enviou mensagem")
+
+if __name__ == '__main__':
+    run()
