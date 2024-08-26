@@ -8,7 +8,15 @@ from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
 def run():
     porta = int(sys.argv[1])
     stub = connect_stub(porta)
-    status = stub.NovoUsuario(cadastro_pb2.Usuario(cpf="123.456.789-01", nome="Jão"))
+    usuario = cadastro_pb2.Usuario(cpf="12345678901", nome="Jão")
+
+    status = stub.NovoUsuario(usuario)
+    print(status)
+    status = stub.ObtemUsuario(cadastro_pb2.Identificador(id="12345678901"))
+    print(status)
+    status = stub.EditaUsuario(cadastro_pb2.Usuario(cpf="12345678901", nome="José"))
+    print(status)
+    status = stub.ObtemUsuario(cadastro_pb2.Identificador(id="12345678901"))
     print(status)
 
 def connect_stub(porta: int) -> cadastro_pb2_grpc.PortalCadastroStub:
