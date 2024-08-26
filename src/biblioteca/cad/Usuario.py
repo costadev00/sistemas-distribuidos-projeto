@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Final
 
 from biblioteca.gRPC import cadastro_pb2
 
 @dataclass
 class Usuario():
-    usuario_pb2: Final[cadastro_pb2.Usuario]
+    usuario_pb2: cadastro_pb2.Usuario
     bloqueado: bool = False
 
     def isValido(self):
@@ -15,7 +14,7 @@ class Usuario():
             ])
     
     def __hash__(self) -> int:
-        return hash(self.usuario_pb2.cpf) ^ hash(self.usuario_pb2.nome)
+        return hash(self.usuario_pb2.cpf)
     
     def __eq__(self, value: object) -> bool:
         if type(value) == type(self):
