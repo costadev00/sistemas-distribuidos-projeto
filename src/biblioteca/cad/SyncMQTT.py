@@ -8,8 +8,9 @@ from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
 from biblioteca import lib
 
 class SyncMQTT():
-    def __init__(self, porta: int) -> None:
+    def __init__(self, porta: int, portalCadastroServicer: cadastro_pb2_grpc.PortalCadastroServicer) -> None:
         self.porta = porta
+        self.portalCadastroServicer = portalCadastroServicer
         self.mqtt_user = lib.connect_mqtt("cad_server", self.porta)
 
         def user_on_message(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
@@ -18,7 +19,8 @@ class SyncMQTT():
                 return
             
             user = Usuario(cadastro_pb2.Usuario(cpf=payload['cpf'], nome=payload['nome']), payload['bloqueado'])
-            print(user.usuario_pb2.cpf)
+            if (payload['operacao'] == 'criar'):
+                self.portalCadastroServicer.NovoUsuario(user.usuario_pb2, None)
 
         self.mqtt_user.on_message =  user_on_message
         self.mqtt_user.subscribe("cad_server/usuario")
