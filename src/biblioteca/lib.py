@@ -1,5 +1,11 @@
 from paho.mqtt import client as mqtt_client
 
+class CRUD():
+    criar = 'criar'
+    remover = 'remover'
+    atualizar = 'atualizar'
+    deletar = 'deletar'
+
 def connect_mqtt(prefixo_id: str, id: int) -> mqtt_client.Client:
     def on_connect(client, userdata, flags, rc, properties):
         if rc == 0:
