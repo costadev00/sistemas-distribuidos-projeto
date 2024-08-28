@@ -2,11 +2,9 @@ from concurrent import futures
 import sys
 
 import grpc
-from paho.mqtt import client as mqtt_client
 
 from biblioteca.cad.PortalCadastroServicer import PortalCadastroServicer
-from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
-from biblioteca import lib
+from biblioteca.gRPC import cadastro_pb2_grpc
 from biblioteca.cad.Usuario import Usuario
 
 def run():

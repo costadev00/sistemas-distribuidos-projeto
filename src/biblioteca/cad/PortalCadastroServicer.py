@@ -1,15 +1,15 @@
-from dataclasses import dataclass
-from paho.mqtt import client as mqtt_client
-
+from biblioteca import lib
 from biblioteca.cad.Usuario import Usuario
 from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
 from biblioteca.cad.SyncMQTT import SyncMQTT, CRUD, SyncMQTTOps
 
+# Funções do SyncMQTTOps são implementadas, e as do gRPC simplesmente as chamam
 class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTOps):
     def __init__(self, usuarios: set[Usuario], porta: int) -> None:
         super().__init__()
         self.usuarios = usuarios
-        self.syncMQTT = SyncMQTT(porta, self)
+        self.mqtt = lib.connect_mqtt("cad_server", porta)
+        self.syncMQTT = SyncMQTT(porta, self, self.mqtt)
 
     def criarUsuario(self, request: cadastro_pb2.Usuario, propagate: bool) -> cadastro_pb2.Status:
         reqU = Usuario(request)
@@ -31,6 +31,7 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTO
         for u in self.usuarios:
             if u == request:
                 usuarioExistente = u
+                break
 
         if usuarioExistente != None:
             if propagate:
@@ -51,6 +52,7 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTO
         for u in self.usuarios:
             if u.usuario_pb2.cpf == request.id:
                 usuario = u
+                break
 
         if usuario != None:
             if propagate:
