@@ -2,7 +2,7 @@ from paho.mqtt import client as mqtt_client
 
 class CRUD():
     criar = 'criar'
-    remover = 'remover'
+    deletar = 'remover'
     atualizar = 'atualizar'
     deletar = 'deletar'
 

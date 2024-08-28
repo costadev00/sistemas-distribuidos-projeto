@@ -11,19 +11,15 @@ from biblioteca.lib import CRUD
 
 class SyncMQTTOps():
     @abstractmethod
-    def criarUsuario(payload: cadastro_pb2.Usuario, propagate: bool):
-        pass
-
-    @abstractmethod
-    def removerUsuario(payload: cadastro_pb2.Usuario, propagate: bool):
+    def criarUsuario(self, request: cadastro_pb2.Usuario, propagate: bool) -> cadastro_pb2.Status:
         pass
    
     @abstractmethod
-    def atualizarUsuario(payload: cadastro_pb2.Usuario, propagate: bool):
+    def atualizarUsuario(self, request: Usuario, propagate: bool) -> cadastro_pb2.Status:
         pass
     
     @abstractmethod
-    def deletarUsuario(payload: cadastro_pb2.Usuario, propagate: bool):
+    def deletarUsuario(self, request: cadastro_pb2.Identificador, propagate: bool) -> cadastro_pb2.Status:
         pass
 
 class SyncMQTT():
@@ -39,8 +35,8 @@ class SyncMQTT():
             if payload['remetente'] == self.porta:
                 return
             
-            user = Usuario(cadastro_pb2.Usuario(cpf=payload['cpf'], nome=payload['nome']), payload['bloqueado'])
-            self.portalCadastroServicer.criarUsuario(user.usuario_pb2, False)
+            user = cadastro_pb2.Usuario(cpf=payload['cpf'], nome=payload['nome'])
+            self.portalCadastroServicer.criarUsuario(user, False)
 
         @self.mqtt_user.topic_callback("cad_server/usuario/"+CRUD.atualizar)
         def user_on_message(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
@@ -50,6 +46,14 @@ class SyncMQTT():
             
             user = Usuario(cadastro_pb2.Usuario(cpf=payload['cpf'], nome=payload['nome']), payload['bloqueado'])
             self.portalCadastroServicer.atualizarUsuario(user, False)
+
+        @self.mqtt_user.topic_callback("cad_server/usuario/"+CRUD.deletar)
+        def user_on_message(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
+            payload = json.loads(msg.payload.decode())
+            if payload['remetente'] == self.porta:
+                return
+            
+            self.portalCadastroServicer.deletarUsuario(cadastro_pb2.Identificador(id=payload['cpf']), False)
 
         self.mqtt_user.loop_start()
 

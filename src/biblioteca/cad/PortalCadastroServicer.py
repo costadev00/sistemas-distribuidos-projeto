@@ -45,19 +45,25 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTO
     def EditaUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
         reqU = Usuario(request)
         return self.atualizarUsuario(reqU, True)
-        
-    def RemoveUsuario(self, request: cadastro_pb2.Identificador, context) -> cadastro_pb2.Status:
+    
+    def deletarUsuario(self, request: cadastro_pb2.Identificador, propagate: bool) -> cadastro_pb2.Status:
         usuario: Usuario | None = None
         for u in self.usuarios:
             if u.usuario_pb2.cpf == request.id:
-                usuario = usuario.usuario_pb2
+                usuario = u
 
         if usuario != None:
+            if propagate:
+                self.syncMQTT.pubUsuario(usuario, CRUD.deletar)
+
             self.usuarios.remove(usuario)
             return cadastro_pb2.Status(status=0)
         else:
             return cadastro_pb2.Status(status=1)
-    
+        
+    def RemoveUsuario(self, request: cadastro_pb2.Identificador, context) -> cadastro_pb2.Status:
+        return self.deletarUsuario(request, True)
+
     def ObtemUsuario(self, request: cadastro_pb2.Identificador, context) -> cadastro_pb2.Usuario:
         for usuario in self.usuarios:
             if usuario.usuario_pb2.cpf == request.id:
