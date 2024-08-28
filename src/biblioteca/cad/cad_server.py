@@ -2,6 +2,7 @@ from concurrent import futures
 import sys
 
 import grpc
+from paho.mqtt import client as mqtt_client
 
 from biblioteca.cad.PortalCadastroServicer import PortalCadastroServicer
 from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
@@ -20,7 +21,7 @@ def run():
 
 def serve(porta: int, usuarios: set[Usuario]):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    cadastro_pb2_grpc.add_PortalCadastroServicer_to_server(PortalCadastroServicer(usuarios), server)
+    cadastro_pb2_grpc.add_PortalCadastroServicer_to_server(PortalCadastroServicer(usuarios, porta), server)
     server.add_insecure_port(f"localhost:{porta}")
     server.start()
     server.wait_for_termination()

@@ -1,11 +1,15 @@
+from dataclasses import dataclass
+from paho.mqtt import client as mqtt_client
+
 from biblioteca.cad.Usuario import Usuario
 from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
-
+from biblioteca.cad.SyncMQTT import SyncMQTT
 
 class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer):
-    def __init__(self, usuarios: set[Usuario]) -> None:
+    def __init__(self, usuarios: set[Usuario], porta: int) -> None:
         super().__init__()
         self.usuarios = usuarios
+        self.syncMQTT = SyncMQTT(porta)
 
     def NovoUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
         reqU = Usuario(request)
@@ -14,6 +18,7 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer):
         if reqU in self.usuarios:
             return cadastro_pb2.Status(status=1, msg="Usuário já existe")
         
+        self.syncMQTT.pubUsuario(reqU, "novo")
         self.usuarios.add(reqU)
         return cadastro_pb2.Status(status=0)
     
