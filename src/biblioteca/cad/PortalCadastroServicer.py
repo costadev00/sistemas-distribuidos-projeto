@@ -3,15 +3,15 @@ from paho.mqtt import client as mqtt_client
 
 from biblioteca.cad.Usuario import Usuario
 from biblioteca.gRPC import cadastro_pb2, cadastro_pb2_grpc
-from biblioteca.cad.SyncMQTT import SyncMQTT, CRUD
+from biblioteca.cad.SyncMQTT import SyncMQTT, CRUD, SyncMQTTOps
 
-class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer):
+class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTOps):
     def __init__(self, usuarios: set[Usuario], porta: int) -> None:
         super().__init__()
         self.usuarios = usuarios
         self.syncMQTT = SyncMQTT(porta, self)
 
-    def _NovoUsuario(self, request: cadastro_pb2.Usuario, propagate: bool) -> cadastro_pb2.Status:
+    def criarUsuario(self, request: cadastro_pb2.Usuario, propagate: bool) -> cadastro_pb2.Status:
         reqU = Usuario(request)
         if not reqU.isValido():
             return cadastro_pb2.Status(status=1, msg="Usuário inválido")
@@ -24,20 +24,27 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer):
         return cadastro_pb2.Status(status=0)
     
     def NovoUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
-        return self._NovoUsuario(request, True)
+        return self.criarUsuario(request, True)
     
-    def EditaUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
-        usuario: Usuario | None = None
+    def atualizarUsuario(self, request: Usuario, propagate: bool) -> cadastro_pb2.Status:
+        usuarioExistente: Usuario | None = None
         for u in self.usuarios:
             if u == request:
-                usuario = u
+                usuarioExistente = u
 
-        if usuario != None:
-            self.usuarios.remove(usuario)
-            self.usuarios.add(Usuario(request, usuario.bloqueado))
+        if usuarioExistente != None:
+            if propagate:
+                self.syncMQTT.pubUsuario(request, CRUD.atualizar)
+
+            self.usuarios.remove(usuarioExistente)
+            self.usuarios.add(request)
             return cadastro_pb2.Status(status=0)
         else:
             return cadastro_pb2.Status(status=1)
+        
+    def EditaUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
+        reqU = Usuario(request)
+        return self.atualizarUsuario(reqU, True)
         
     def RemoveUsuario(self, request: cadastro_pb2.Identificador, context) -> cadastro_pb2.Status:
         usuario: Usuario | None = None
