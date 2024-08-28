@@ -11,16 +11,20 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer):
         self.usuarios = usuarios
         self.syncMQTT = SyncMQTT(porta, self)
 
-    def NovoUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
+    def _NovoUsuario(self, request: cadastro_pb2.Usuario, propagate: bool) -> cadastro_pb2.Status:
         reqU = Usuario(request)
         if not reqU.isValido():
             return cadastro_pb2.Status(status=1, msg="Usuário inválido")
         if reqU in self.usuarios:
             return cadastro_pb2.Status(status=1, msg="Usuário já existe")
-        
-        self.syncMQTT.pubUsuario(reqU, CRUD.criar)
+
+        if propagate:    
+            self.syncMQTT.pubUsuario(reqU, CRUD.criar)
         self.usuarios.add(reqU)
         return cadastro_pb2.Status(status=0)
+    
+    def NovoUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
+        return self._NovoUsuario(request, True)
     
     def EditaUsuario(self, request: cadastro_pb2.Usuario, context) -> cadastro_pb2.Status:
         usuario: Usuario | None = None

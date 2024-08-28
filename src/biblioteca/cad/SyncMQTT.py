@@ -22,7 +22,7 @@ class SyncMQTT():
                 return
             
             user = Usuario(cadastro_pb2.Usuario(cpf=payload['cpf'], nome=payload['nome']), payload['bloqueado'])
-            self.portalCadastroServicer.NovoUsuario(user.usuario_pb2, None)
+            self.portalCadastroServicer._NovoUsuario(user.usuario_pb2, False)
 
         self.mqtt_user.loop_start()
 
