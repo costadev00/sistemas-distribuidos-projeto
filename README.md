@@ -36,15 +36,15 @@ rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {} = Cliente: invoca mét
 
 (O programa não pode crashar).
 
-rpc NovoLivro(Livro) returns (Status) {};
+rpc NovoLivro(Livro) returns (Status) {} = Cliente: Dados / Servidor: retorna 0 para sucesso, Erro: 1 com descrição do erro.
 
-rpc EditaLivro(Livro) returns (Status) {};
+rpc EditaLivro(Livro) returns (Status) {} = Cliente: Dados / Servidor: retorna 0 para sucesso, Erro: 1 com descrição do erro.
 
-rpc RemoveLivro(LivroIdentificador) returns (Status) {};
+rpc RemoveLivro(LivroIdentificador) returns (Status) {} = Cliente: Key / Servidor: retorna 0 para sucesso, Erro: 1 com descrição do erro.
 
-rpc ObtemLivro(LivroIdentificador) returns (Livro) {};
+rpc ObtemLivro(LivroIdentificador) returns (Livro) {} = Cliente: Key / Servidor: retorna Dados para sucesso, Erro: Livro com dados em branco.
 
-rpc ObtemTodosLivros(Vazia) returns (stream Livro) {}; 
+rpc ObtemTodosLivros(Vazia) returns (stream Livro) {} = Cliente: invoca método sem argumentos / Servidor: retorna lista de todos os livros cadastrados.
 
 ## Portal biblioteca:
 Emprestimo de livros a usuarios
