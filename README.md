@@ -36,6 +36,16 @@ rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {} = Cliente: invoca mét
 
 (O programa não pode crashar).
 
+rpc NovoLivro(Livro) returns (Status) {};
+
+rpc EditaLivro(Livro) returns (Status) {};
+
+rpc RemoveLivro(LivroIdentificador) returns (Status) {};
+
+rpc ObtemLivro(LivroIdentificador) returns (Livro) {};
+
+rpc ObtemTodosLivros(Vazia) returns (stream Livro) {}; 
+
 ## Portal biblioteca:
 Emprestimo de livros a usuarios
 (Menu Terminal)
