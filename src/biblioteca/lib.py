@@ -6,6 +6,10 @@ class CRUD():
     atualizar = 'atualizar'
     deletar = 'deletar'
 
+    criar_livro = 'criar_livro'
+    atualizar_livro = 'atualizar_livro'
+    deletar_livro = 'deletar_livro'
+
 def connect_mqtt(prefixo_id: str, id: int) -> mqtt_client.Client:
     def on_connect(client, userdata, flags, rc, properties):
         if rc == 0:

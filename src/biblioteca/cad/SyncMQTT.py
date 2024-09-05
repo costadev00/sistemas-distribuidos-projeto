@@ -68,3 +68,48 @@ class SyncMQTT():
             'bloqueado': msg.bloqueado
         })
         self.mqtt.publish("cad_server/usuario/" + operacao, payload)
+
+class SyncMQTT():
+    def __init__(self, porta: int, portalCadastroServicer: SyncMQTTOps, mqtt: mqtt_client.Client) -> None:
+        self.porta = porta
+        self.portalCadastroServicer = portalCadastroServicer
+        self.mqtt = mqtt
+        self.mqtt.subscribe("cad_server/#")
+
+        @self.mqtt.topic_callback("cad_server/livro/" + CRUD.criar_livro)
+        def _(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
+            payload = json.loads(msg.payload.decode())
+            if payload['remetente'] == self.porta:
+                return
+            
+            livro = cadastro_pb2.Livro(isbn=payload['isbn'], titulo=payload['titulo'])
+            self.portalCadastroServicer.criarLivro(livro, False)
+
+        @self.mqtt.topic_callback("cad_server/livro/" + CRUD.atualizar_livro)
+        def _(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
+            payload = json.loads(msg.payload.decode())
+            if payload['remetente'] == self.porta:
+                return
+            
+            livro = Livro(cadastro_pb2.Livro(isbn=payload['isbn'], titulo=payload['titulo']), payload['autor'])
+            self.portalCadastroServicer.atualizarLivro(livro, False)
+
+        @self.mqtt.topic_callback("cad_server/livro/" + CRUD.deletar_livro)
+        def _(client: mqtt_client.Client, userdata, msg: mqtt_client.MQTTMessage):
+            payload = json.loads(msg.payload.decode())
+            if payload['remetente'] == self.porta:
+                return
+            
+            self.portalCadastroServicer.deletarLivro(cadastro_pb2.Identificador(id=payload['isbn']), False)
+
+        self.mqtt.loop_start()
+
+    def pubLivro(self, msg: Livro, operacao: str):
+        """Publicar uma operação de livro no broker MQTT"""
+        payload = json.dumps({
+            'remetente': self.porta,
+            'isbn': msg.livro_pb2.isbn,
+            'titulo': msg.livro_pb2.titulo,
+            'autor': msg.autor
+        })
+        self.mqtt.publish("cad_server/livro/" + operacao, payload)

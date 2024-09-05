@@ -6,6 +6,7 @@ import grpc
 from biblioteca.cad.PortalCadastroServicer import PortalCadastroServicer
 from biblioteca.gRPC import cadastro_pb2_grpc
 from biblioteca.cad.Usuario import Usuario
+from biblioteca.cad.Livro import Livro
 
 def run():
     if len(sys.argv) != 2:
