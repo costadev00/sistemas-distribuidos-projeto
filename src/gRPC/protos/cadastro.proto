@@ -45,3 +45,25 @@ service PortalCadastro {
   rpc ObtemLivro(Identificador) returns (Livro) {}
   rpc ObtemTodosLivros(Vazia) returns (stream Livro) {}
 }
+
+// Definições para listar e pesquisar livros e usuários
+
+// Mensagem para pesquisa
+message Pesquisa {
+    string termo = 1;
+}
+
+// Serviço Biblioteca
+service Biblioteca {
+    // Listar todos os livros
+    rpc ListarLivros(Vazia) returns (stream Livro) {}
+
+    // Pesquisar livros
+    rpc PesquisarLivros(Pesquisa) returns (stream Livro) {}
+
+    // Listar todos os usuários
+    rpc ListarUsuarios(Vazia) returns (stream Usuario) {}
+
+    // Pesquisar usuários
+    rpc PesquisarUsuarios(Pesquisa) returns (stream Usuario) {}
+}

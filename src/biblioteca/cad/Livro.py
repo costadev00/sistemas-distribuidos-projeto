@@ -22,3 +22,5 @@ class Livro():
         if isinstance(value, cadastro_pb2.Livro):
             return self.livro_pb2.isbn == value.isbn
         return False
+
+    
