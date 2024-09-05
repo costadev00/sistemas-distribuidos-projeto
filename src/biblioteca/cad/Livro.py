@@ -4,7 +4,9 @@ from biblioteca.gRPC import cadastro_pb2
 @dataclass
 class Livro():
     livro_pb2: cadastro_pb2.Livro
-    emprestado: bool = False  # Exemplo de um atributo adicional
+    emprestado: bool = False
+    emprestado_para: str = None
+    momento_emprestimo: float = None
 
     def isValido(self) -> bool:
         # Adicione validações específicas para o livro
@@ -22,5 +24,3 @@ class Livro():
         if isinstance(value, cadastro_pb2.Livro):
             return self.livro_pb2.isbn == value.isbn
         return False
-
-    
