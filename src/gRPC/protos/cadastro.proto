@@ -1,45 +1,47 @@
 syntax = "proto3";
 
-package biblioteca.gRPC;
+option java_multiple_files = true;
+option java_package = "br.ufu.facom.gbc074.projeto.cadastro";
 
-message Vazia {}
+package cadastro;
 
-message Pesquisa {
-    string termo = 1;
+message Usuario{
+  // CPF do usuario (chave)
+  string cpf     = 1;
+  string nome    = 2;
 }
 
 message Livro {
-    string titulo = 1;
-    string autor = 2;
-    string isbn = 3;
+  // ISBN do livro (chave)
+  string isbn   = 1;
+  string titulo = 2;
+  string autor  = 3;
+  int32 total   = 4;
 }
 
-message Usuario {
-    string nome = 1;
-    string email = 2;
-    string cpf = 3;
+message Status {
+  // 0 = sucesso, 1 = erro
+  int32 status = 1; 
+  // detalhes do erro para status = 1
+  string msg   = 2;
 }
 
-message EmprestimoRequest {
-    string cpf_usuario = 1;
-    string titulo_livro = 2;
+message Identificador {
+  // cpf para usuario, isbn para livro
+  string id = 1;
 }
 
-message BloqueioRequest {
-    string cpf_usuario = 1;
-}
+message Vazia {}
 
-message Resposta {
-    string mensagem = 1;
-}
-
-service Biblioteca {
-    rpc ListarLivros(Vazia) returns (stream Livro) {}
-    rpc PesquisarLivros(Pesquisa) returns (stream Livro) {}
-    rpc ListarUsuarios(Vazia) returns (stream Usuario) {}
-    rpc PesquisarUsuarios(Pesquisa) returns (stream Usuario) {}
-
-    // Funções de escrita
-    rpc EmprestarLivro(EmprestimoRequest) returns (Resposta) {}
-    rpc BloquearUsuario(BloqueioRequest) returns (Resposta) {}
+service PortalCadastro {
+  rpc NovoUsuario(Usuario) returns (Status) {}
+  rpc EditaUsuario(Usuario) returns (Status) {}
+  rpc RemoveUsuario(Identificador) returns (Status) {}
+  rpc ObtemUsuario(Identificador) returns (Usuario) {}
+  rpc ObtemTodosUsuarios(Vazia) returns (stream Usuario) {}
+  rpc NovoLivro(Livro) returns (Status) {}
+  rpc EditaLivro(Livro) returns (Status) {}
+  rpc RemoveLivro(Identificador) returns (Status) {}
+  rpc ObtemLivro(Identificador) returns (Livro) {}
+  rpc ObtemTodosLivros(Vazia) returns (stream Livro) {}
 }

@@ -163,3 +163,5 @@ cython_debug/
 
 # Generated files
 src/biblioteca/gRPC
+#ignore vscode folder
+.vscode/

@@ -3,8 +3,10 @@ from concurrent import futures
 import sys
 import grpc
 
-from biblioteca.cad.PortalCadastroServicer import PortalCadastroServicer
+# from biblioteca.cad.PortalCadastroServicer import PortalCadastroServicer
+
 from biblioteca.gRPC import cadastro_pb2_grpc, cadastro_pb2
+from .PortalCadastroServicer import PortalCadastroServicer
 from biblioteca.cad.Usuario import Usuario
 from biblioteca.cad.Livro import Livro
 
