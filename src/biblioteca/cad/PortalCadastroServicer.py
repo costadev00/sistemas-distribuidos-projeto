@@ -76,3 +76,11 @@ class PortalCadastroServicer(cadastro_pb2_grpc.PortalCadastroServicer, SyncMQTTO
     def ObtemTodosUsuarios(self, request: cadastro_pb2.Vazia, context):
         for usuario in self.usuarios:
             yield usuario.usuario_pb2
+
+    #################################
+
+    def getTodosUsuarios(self) -> set[Usuario]:
+        return self.usuarios
+
+    def deletarTodosUsuarios(self) -> None:
+        self.usuarios = set()
